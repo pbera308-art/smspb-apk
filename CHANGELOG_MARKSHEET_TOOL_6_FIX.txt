@@ -1,0 +1,17 @@
+BSP-SMS Android - Tool 6 Bulk Marksheet Downloader fix
+
+Files changed:
+1. app/src/main/java/com/bspsms/android/MainActivity.kt
+   - During automation, the popup WebView now continues the original portal navigation.
+   - Removed the extra loadUrl() replay of an already-started GET request. Replaying/cancelling a navigation can interrupt the portal request and cause ERR_CACHE_MISS. POST requests are not replayed.
+
+2. app/src/main/java/com/bspsms/android/MarksheetAutomationController.kt
+   - The marksheet wait loop no longer aborts merely because a shared error timestamp was set by either WebView.
+   - It now checks the active marksheet WebView (popup when present) and treats an actual error page / portal error as a failure. This avoids a false failure when the table WebView reports an error while the marksheet popup has loaded correctly.
+
+No other tools or app features were intentionally changed.
+
+Validation note:
+- Source-level changes were reviewed.
+- This environment did not have Gradle or the Android SDK configured, so an APK build and on-device Portal test could not be run here.
+- The fix must be verified on the Android device with the same Banglarshiksha account/session. If the Portal itself rejects the popup POST, its live response/log is needed; POST requests must not be blindly replayed.
